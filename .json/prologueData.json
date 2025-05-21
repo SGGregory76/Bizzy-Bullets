@@ -1,0 +1,56 @@
+{
+  "npc": {
+    "name": "Bizzy",
+    "intro": "Yo, you lookin’ to level up? Take this burner – your new hustle starts now.",
+    "portrait": "🥋"
+  },
+  "questions": [
+    {
+      "text": "You down to run this package?",
+      "options": [
+        { "label": "No questions asked.", "outcomes": { "xp": 5, "heat": 2, "rep": 3 } },
+        { "label": "What's in it?", "outcomes": { "rp": 2, "xp": 2 } }
+      ]
+    },
+    {
+      "text": "Where you wanna stash your cash?",
+      "options": [
+        { "label": "In my sock.", "outcomes": { "cash": 10, "heat": 1 } },
+        { "label": "Bury it.", "outcomes": { "rp": 1, "rep": 1 } }
+      ]
+    },
+    {
+      "text": "Someone watching you?",
+      "options": [
+        { "label": "Ignore it.", "outcomes": { "heat": 2, "rep": 2 } },
+        { "label": "Take the alley.", "outcomes": { "energy": -1, "xp": 3 } }
+      ]
+    },
+    {
+      "text": "You see a dropped bag.",
+      "options": [
+        { "label": "Grab and run.", "outcomes": { "cash": 20, "heat": 3 } },
+        { "label": "Leave it.", "outcomes": { "rp": 1 } }
+      ]
+    },
+    {
+      "text": "You get a weird text on the burner.",
+      "options": [
+        { "label": "Reply.", "outcomes": { "rp": 1, "xp": 1 } },
+        { "label": "Ignore it.", "outcomes": { "rep": 1 } }
+      ]
+    }
+  ],
+  "combat": {
+    "enemy": "Thug",
+    "enemyStats": { "hp": 10, "atk": 3 },
+    "playerStats": { "hp": 12, "atk": 4, "energyCost": 1 },
+    "reward": { "xp": 5, "rep": 2, "heat": 1 },
+    "failPenalty": { "xp": -5, "rep": -2, "heat": 2 }
+  },
+  "stashGame": {
+    "gridSize": 3,
+    "maxTries": 5,
+    "reward": { "cash": 50, "xp": 5 }
+  }
+}
