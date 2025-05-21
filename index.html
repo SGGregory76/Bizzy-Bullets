@@ -1,5 +1,113 @@
-<div id="hud">
-  Cash: <span id="cash"></span><br>
-  HP: <span id="hp"></span><br>
-  <button onclick="performAction('Sell')">Sell</button>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bizzy Bullets - Simulator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      background: #111;
+      color: #eee;
+      font-family: 'Segoe UI', sans-serif;
+      height: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    h1, h2, h3, h4, h5 {
+      color: #fff;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    p, span, div {
+      color: #ddd;
+      line-height: 1.5em;
+    }
+
+    #hud, #inventory, #log, .section {
+      background-color: #1a1a1a;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #333;
+    }
+
+    #log {
+      flex-grow: 1;
+      overflow-y: auto;
+      max-height: 25vh;
+    }
+
+    button {
+      background-color: #1e1e1e;
+      color: #ffffff;
+      border: 1px solid #444;
+      padding: 10px 15px;
+      border-radius: 4px;
+      font-weight: bold;
+      margin: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #333;
+    }
+
+    a {
+      color: #4ecfff;
+      text-decoration: underline;
+    }
+
+    a:hover {
+      color: #87f5ff;
+    }
+  </style>
+</head>
+<body>
+  <h1>Bizzy Bullets</h1>
+
+  <div id="hud">
+    <h2>Player Stats</h2>
+    <p>Name: <span id="playerName"></span></p>
+    <p>Cash: <span id="cash"></span></p>
+    <p>HP: <span id="hp"></span></p>
+    <p>XP: <span id="xp"></span></p>
+    <p>Level: <span id="level"></span></p>
+    <p>Heat: <span id="heat"></span></p>
+    <p>Energy: <span id="energy"></span></p>
+  </div>
+
+  <div class="section">
+    <h2>Actions</h2>
+    <button id="btnSell">Sell</button>
+    <button id="btnFight">Fight</button>
+    <button id="btnRest">Rest</button>
+  </div>
+
+  <div id="inventory" class="section">
+    <h2>Inventory</h2>
+    <!-- Inventory items will be rendered here -->
+  </div>
+
+  <div id="log" class="section">
+    <h2>Activity Log</h2>
+    <!-- Action logs will appear here -->
+  </div>
+
+  <!-- Scripts -->
+  <script src="game-data.js"></script>
+  <script src="game-engine.js"></script>
+  <script src="ui-handler.js"></script>
+  <script>
+    window.onload = () => {
+      initUI();
+      showMessage("Welcome to Bizzy Bullets. Select an action to begin.");
+    };
+  </script>
+</body>
+</html>
