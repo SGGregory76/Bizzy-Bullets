@@ -16,7 +16,12 @@ inventory: \[],
 skills: {
 dealing: 1,
 crafting: 1,
-stealth: 1
+stealth: 1,
+shooting: 1
+},
+equipped: {
+weapon: null,
+armor: null
 }
 },
 locations: \[
@@ -70,6 +75,20 @@ name: "Leather Jacket",
 type: "armor",
 value: 75,
 defBoost: 3
+},
+{
+id: "9mm\_pistol",
+name: "9mm Pistol",
+type: "weapon",
+value: 300,
+atkBoost: 10
+},
+{
+id: "kevlar\_vest",
+name: "Kevlar Vest",
+type: "armor",
+value: 250,
+defBoost: 7
 }
 ],
 actions: {
@@ -93,15 +112,35 @@ heat: -2
 },
 Fight: {
 description: "Engage in a street fight to gain XP and loot.",
-xp: 20,
-energyCost: 15,
-heat: 2,
+xp: 25,
+energyCost: 20,
+heat: 3,
 requires: \["weapon"],
-damageRange: \[5, 20],
+damageRange: \[10, 25],
 reward: {
-cash: 50,
-itemDropChance: 0.3
+cash: 75,
+itemDropChance: 0.4
 }
 }
+},
+enemies: \[
+{
+id: "street\_thug",
+name: "Street Thug",
+hp: 60,
+atk: 8,
+def: 3,
+xpReward: 15,
+cashReward: 40
+},
+{
+id: "gang\_member",
+name: "Gang Member",
+hp: 100,
+atk: 12,
+def: 6,
+xpReward: 30,
+cashReward: 100
 }
+]
 };
