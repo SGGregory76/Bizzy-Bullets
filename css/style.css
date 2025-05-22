@@ -1,100 +1,94 @@
-<style>
-#memorial {
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity 2s ease, transform 2s ease;
-  color: #aaa;
+/* === Base Reset === */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background: #111 !important;
+  color: #f0f0f0 !important;
+  font-family: 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  padding: 20px;
   text-align: center;
-  margin-bottom: 2em;
 }
 
-#memorial.show {
-  opacity: 1;
-  transform: translateY(0);
+/* === Typography === */
+h1, h2, h3, h4, h5, h6 {
+  color: #fff !important;
+  margin-bottom: 10px;
+  font-weight: bold;
 }
 
+p, span, div {
+  color: #ddd !important;
+  line-height: 1.5em;
+}
 
-  body {
-    background: #111;
-    color: #f0f0f0;
-    font-family: 'Segoe UI', sans-serif;
-    margin: 0;
-    padding: 2em 1em;
-    text-align: center;
-  }
+/* === Containers === */
+.section,
+#hud,
+#inventory,
+#log {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 15px auto;
+  max-width: 600px;
+  text-align: left;
+}
 
-  h1, h2, h3, h4 {
-    color: #fff;
-    margin: 0.5em 0;
-  }
+/* === HUD specific === */
+#log {
+  max-height: 25vh;
+  overflow-y: auto;
+  flex-grow: 1;
+}
 
-  #game {
-    max-width: 520px;
-    margin: 0 auto;
-    padding: 1em;
-  }
+/* === Buttons === */
+button {
+  background-color: #1e1e1e;
+  color: #ffffff;
+  border: 1px solid #444;
+  padding: 10px 15px;
+  border-radius: 4px;
+  font-weight: bold;
+  margin: 5px;
+  cursor: pointer;
+  width: auto;
+}
 
-  .question-box, .question-result-box, .combat-ui, .reward-box, .game-over-box {
-    background: #1e1e1e;
-    border: 2px solid #444;
-    border-radius: 10px;
-    padding: 1em;
-    margin: 1.5em 0;
-    text-align: center;
-  }
+button:hover {
+  background-color: #333;
+}
 
-  .bar-container {
-    background: #444;
-    border-radius: 4px;
-    height: 20px;
-    margin: 0.5em 0;
-    overflow: hidden;
-  }
+/* === Links === */
+a {
+  color: #4ecfff;
+  text-decoration: underline;
+}
 
-  .bar {
-    height: 100%;
-    transition: width 0.3s ease;
-  }
+a:hover {
+  color: #87f5ff;
+}
 
-  .bar.hp { background: #e74c3c; }
-  .bar.energy { background: #2ecc71; }
+/* === Inventory bar / log highlights === */
+.inventory-bar {
+  font-size: 0.95em;
+  margin-top: 1em;
+  color: #bbb;
+}
 
-  button {
-    width: 100%;
-    max-width: 360px;
-    margin: 0.5em auto;
-    padding: 0.75em 1em;
-    background: #333;
-    color: #fff;
-    font-size: 1em;
-    border: 1px solid #666;
-    border-radius: 6px;
-    cursor: pointer;
-    display: block;
-  }
-
-  button:hover {
-    background: #555;
-  }
-
-  .inventory-bar {
-    font-size: 0.95em;
-    margin-top: 1em;
-    color: #bbb;
-  }
-
-  a {
-    color: #4ecfff;
-    text-decoration: underline;
-  }
-
-  a:hover {
-    color: #87f5ff;
-  }
-
-  footer {
-    margin-top: 2em;
-    font-size: 0.9em;
-    color: #777;
-  }
-</style>
+/* === Title Containers === */
+.page-title,
+.section-title {
+  color: #fff !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.5);
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
