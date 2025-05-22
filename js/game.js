@@ -9,6 +9,9 @@ function renderBar(current, max, className) {
   const pct = Math.max(0, (current / max) * 100);
   return `<div class='bar-container'><div class='bar ${className}' style='width:${pct}%;'></div></div>`;
 }
+setTimeout(() => {
+  document.getElementById("memorial").classList.add("show");
+}, 300);
 
 function render() {
   const el = document.getElementById("game");
