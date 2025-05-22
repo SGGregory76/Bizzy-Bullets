@@ -1,10 +1,18 @@
+// Initialize player state
 let prologueData = {};
 let currentStep = 0;
 let questionReward = null;
-let playerStats = { hp: 12, energy: 5, cash: 0, rp: 0, xp: 0, rep: 0, heat: 0 };
 let enemyHP = 10;
+let playerInventory = [];
 
-const icon = k => ({ hp: '❤️', energy: '⚡', cash: '💵', rp: '🧠', xp: '⭐', rep: '📢', heat: '🔥' }[k] || '');
+let playerStats = {
+  hp: 12, energy: 5, cash: 0, rp: 0, xp: 0, rep: 0, heat: 0
+};
+
+const icon = k => ({
+  hp: '❤️', energy: '⚡', cash: '💵',
+  rp: '🧠', xp: '⭐', rep: '📢', heat: '🔥'
+}[k] || '');
 
 function renderBar(current, max, className) {
   const pct = Math.max(0, (current / max) * 100);
@@ -13,6 +21,7 @@ function renderBar(current, max, className) {
 
 function render() {
   const el = document.getElementById("game");
+
   if (!prologueData.questions) {
     el.innerHTML = `<p>⚠️ Prologue data not loaded.</p>`;
     return;
@@ -36,6 +45,7 @@ function render() {
     let html = `<div class="question-result-box"><h3>✅ Result</h3>`;
     for (let k in questionReward) {
       if (k === "item") {
+        playerInventory.push(questionReward[k]);
         html += `<p>🎁 Item Gained: ${questionReward[k]}</p>`;
       } else {
         playerStats[k] = (playerStats[k] || 0) + questionReward[k];
@@ -77,11 +87,14 @@ function combatTurn() {
   playerStats.hp -= prologueData.combat.enemyAtk;
 
   if (enemyHP <= 0) {
+    // Reward display before continuing
+    let html = `<div class='question-result-box'><h3>🏆 Combat Rewards</h3>`;
     for (let k in prologueData.combat.reward) {
       playerStats[k] = (playerStats[k] || 0) + prologueData.combat.reward[k];
+      html += `<p>${icon(k)} ${k.toUpperCase()}: +${prologueData.combat.reward[k]}</p>`;
     }
-    currentStep++;
-    render();
+    html += `<button onclick="nextQuestion()">➡️ Continue</button></div>`;
+    document.getElementById("game").innerHTML = html;
   } else if (playerStats.hp <= 0) {
     document.getElementById("game").innerHTML = `
       <div class='game-over-box'>
@@ -102,10 +115,16 @@ function renderSummary() {
   for (let k in playerStats) {
     html += `<p>${icon(k)} ${k.toUpperCase()}: ${playerStats[k]}</p>`;
   }
+  if (playerInventory.length) {
+    html += `<p>🎒 Inventory: ${playerInventory.join(", ")}</p>`;
+  }
   html += `<p>📲 Redirecting to Burner OS...</p></div>`;
   el.innerHTML = html;
+
+  // Save to localStorage
   localStorage.setItem("bb_save", JSON.stringify(playerStats));
-  setTimeout(() => window.location.href = "/p/burner-os.html", 3000);
+  localStorage.setItem("bb_inventory", JSON.stringify(playerInventory));
+  setTimeout(() => window.location.href = "https://bizzybullets.blogspot.com/p/burner-os.html?m=1", 3000);
 }
 
 function useItem() {
@@ -127,7 +146,6 @@ function nextQuestion() {
   render();
 }
 
-// Load from external JSON file
 window.onload = function () {
   fetch("/json/prologue.json")
     .then(res => res.json())
