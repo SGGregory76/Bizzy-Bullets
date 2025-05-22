@@ -1,185 +1,237 @@
-<div id="game">Loading...</div>
-<style>
-  body { background: #111; color: #fff; font-family: sans-serif; margin: 0; padding: 0; }
-  #game { max-width: 480px; margin: auto; padding: 1em; }
-  .question-box, .question-result-box, .combat-ui, .reward-box {
-    background: #222; border: 2px solid #444; border-radius: 8px;
-    padding: 1em; margin: 1em 0; text-align: center;
-  }
-  .bar-container { background: #555; border-radius: 5px; margin: 0.5em 0; height: 20px; overflow: hidden; }
-  .bar { height: 100%; transition: width 0.3s ease; }
-  .bar.hp { background: red; }
-  .bar.energy { background: limegreen; }
-  button {
-    width: 100%; margin: 0.5em 0; padding: 0.75em;
-    background: #444; color: #fff; font-size: 1em; border: none; border-radius: 5px;
-  }
-  button:hover { background: #666; }
-</style>
-<script>
-window.onload = function () {
-  const prologueData = {
-    npc: {
-      name: "Bizzy",
-      intro: "Yo, you lookin’ to level up? Take this burner – your new hustle starts now.",
-      portrait: "🥋"
-    },
-    questions: [
-      { id: "q1", npcLine: "Let’s see how you handle a little run.", text: "You down to run this package?",
-        options: [
-          { label: "No questions asked.", outcomes: { xp: 5, heat: 2, rep: 3 } },
-          { label: "What's in it?", outcomes: { rp: 2, xp: 2 } }
-        ]
-      },
-      { id: "q2", npcLine: "Always hide your stacks smart.", text: "Where you wanna stash your cash?",
-        options: [
-          { label: "In my sock.", outcomes: { cash: 10, heat: 1 } },
-          { label: "Bury it.", outcomes: { rp: 1, rep: 1 } }
-        ]
-      },
-      { id: "q3", npcLine: "Stay sharp out there.", text: "Someone watching you?",
-        options: [
-          { label: "Ignore it.", outcomes: { heat: 2, rep: 2 } },
-          { label: "Take the alley.", outcomes: { energy: -1, xp: 3 } }
-        ]
-      },
-      { id: "q4", npcLine: "Temptation’s part of the game.", text: "You see a dropped bag.",
-        options: [
-          { label: "Grab and run.", outcomes: { cash: 20, heat: 3 } },
-          { label: "Leave it.", outcomes: { rp: 1 } }
-        ]
-      },
-      { id: "q5", npcLine: "Sometimes it’s best to ignore the noise.", text: "You get a weird text on the burner.",
-        options: [
-          { label: "Reply.", outcomes: { rp: 1, xp: 1 } },
-          { label: "Ignore it.", outcomes: { rep: 1 } }
-        ]
-      }
-    ],
-    combat: {
-      enemy: "Thug",
-      playerAtk: 4,
-      enemyAtk: 3,
-      energyCost: 1,
-      reward: { xp: 5, rep: 2, heat: 1 }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bizzy Bullets - Prologue</title>
+  <style>
+    html, body {
+      background: #111 !important;
+      color: #f0f0f0 !important;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      text-align: center;
     }
-  };
 
-  let currentStep = 0;
-  let questionReward = null;
-  let playerStats = { hp: 12, energy: 5, cash: 0, rp: 0, xp: 0, rep: 0, heat: 0 };
-  let enemyHP = 10;
-
-  const icon = k => ({ hp: '❤️', energy: '⚡', cash: '💵', rp: '🧠', xp: '⭐', rep: '📢', heat: '🔥' }[k] || '');
-
-  function renderBar(current, max, className) {
-    const pct = Math.max(0, (current / max) * 100);
-    return `<div class='bar-container'><div class='bar ${className}' style='width:${pct}%;'></div></div>`;
-  }
-
-  function render() {
-    const el = document.getElementById("game");
-    el.innerHTML = "";
-
-    if (currentStep === 0) {
-      el.innerHTML = `<div class="question-box">
-        <h2>${prologueData.npc.portrait} ${prologueData.npc.name}</h2>
-        <p>"${prologueData.npc.intro}"</p>
-        <button onclick="nextQuestion()">📱 Continue</button>
-      </div>`;
-    } else if (currentStep <= prologueData.questions.length && !questionReward) {
-      const q = prologueData.questions[currentStep - 1];
-      let html = `<div class="question-box"><h3>Q${currentStep}</h3><p>💬 ${q.npcLine}</p><p>${q.text}</p>`;
-      q.options.forEach((opt, i) => {
-        html += `<button onclick="choose(${i})">${opt.label}</button>`;
-      });
-      html += "</div>";
-      el.innerHTML = html;
-    } else if (questionReward) {
-      let html = `<div class="question-result-box"><h3>✅ Result</h3>`;
-      for (let k in questionReward) {
-        html += `<p>${icon(k)} ${k.toUpperCase()}: ${questionReward[k] >= 0 ? "+" : ""}${questionReward[k]}</p>`;
-        playerStats[k] = (playerStats[k] || 0) + questionReward[k];
-      }
-      html += `<button onclick="nextQuestion()">➡️ Continue</button></div>`;
-      el.innerHTML = html;
-    } else if (currentStep === 6) {
-      renderCombat();
-    } else if (currentStep === 7) {
-      renderSummary();
+    h1, h2, h3, h4, h5, h6, p {
+      color: #999 !important;
+      margin: 0.5em 0;
     }
-  }
 
-  function renderCombat() {
-    const el = document.getElementById("game");
-    let html = `<div class="combat-ui">
-      <h3>🥊 Combat: ${prologueData.combat.enemy}</h3>
-      <p>❤️ You: ${playerStats.hp}</p>${renderBar(playerStats.hp, 12, 'hp')}
-      <p>⚡ Energy: ${playerStats.energy}</p>${renderBar(playerStats.energy, 5, 'energy')}
-      <p>💀 Enemy HP: ${enemyHP}</p>${renderBar(enemyHP, 10, 'hp')}
-      <div id="combat-log">🗨️ Ready to fight</div>
-      <button onclick="combatTurn()">👊 Attack (⚡ -1)</button>
-      <button onclick="useItem()">🎒 Use Item</button>
-      <button onclick="useSkill()">🎯 Use Skill</button>
-    </div>`;
-    el.innerHTML = html;
-  }
-
-  window.combatTurn = function () {
-    if (playerStats.energy < prologueData.combat.energyCost) {
-      document.getElementById("combat-log").innerText = "⚠️ Not enough energy!";
-      return;
+    #memorial {
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: opacity 2s ease, transform 2s ease;
+      color: #ccc;
+      text-align: center;
+      padding-top: 1em;
     }
-    playerStats.energy -= prologueData.combat.energyCost;
-    enemyHP -= prologueData.combat.playerAtk;
-    playerStats.hp -= prologueData.combat.enemyAtk;
 
-    if (enemyHP <= 0) {
-      for (let k in prologueData.combat.reward) {
-        playerStats[k] = (playerStats[k] || 0) + prologueData.combat.reward[k];
+    #memorial.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #game {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 1em;
+      text-align: center;
+    }
+
+    .question-box, .question-result-box, .combat-ui, .reward-box, .game-over-box {
+      background: #1e1e1e;
+      border: 2px solid #444;
+      border-radius: 10px;
+      padding: 1.5em;
+      margin: 2em auto;
+      text-align: center;
+      color: #eee;
+    }
+
+    .bar-container {
+      background: #444;
+      border-radius: 4px;
+      height: 20px;
+      margin: 0.5em 0;
+      overflow: hidden;
+    }
+
+    .bar {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+
+    .bar.hp { background: #e74c3c; }
+    .bar.energy { background: #2ecc71; }
+
+    button {
+      width: 100%;
+      max-width: 360px;
+      margin: 0.5em auto;
+      padding: 0.75em 1em;
+      background: #333;
+      color: #fff;
+      font-size: 1em;
+      border: 1px solid #666;
+      border-radius: 6px;
+      cursor: pointer;
+      display: block;
+    }
+
+    button:hover {
+      background: #555;
+    }
+
+    .inventory-bar {
+      font-size: 0.95em;
+      margin-top: 1em;
+      color: #bbb;
+    }
+
+    a {
+      color: #4ecfff;
+      text-decoration: underline;
+    }
+
+    a:hover {
+      color: #87f5ff;
+    }
+  </style>
+</head>
+<body>
+  <div id="memorial">
+    <h3>In loving memory of VJA 420</h3>
+    <p>Grateful for our time 💚<br>12/28/54 – 10/17/24</p>
+    <p style="font-size:1.5em;">“🙏”</p>
+  </div>
+  <div id="game">Loading...</div>
+
+  <script>
+    window.onload = function () {
+      document.getElementById("memorial").classList.add("show");
+      const game = document.getElementById("game");
+      const state = {
+        step: 0,
+        enemyHP: 10,
+        inventory: [],
+        stats: { hp: 12, energy: 5, cash: 0, rp: 0, xp: 0, rep: 0, heat: 0 },
+        reward: null
+      };
+
+      const icons = { hp: '❤️', energy: '⚡', cash: '💵', rp: '🧠', xp: '⭐', rep: '📢', heat: '🔥' };
+
+      const data = {
+        npc: { name: "Bizzy", intro: "Yo, you lookin’ to level up? Take this burner – your new hustle starts now.", portrait: "🥋" },
+        questions: [
+          { npcLine: "Let’s see how you handle a little run.", text: "You down to run this package?", options: [
+            { label: "No questions asked.", outcomes: { xp: 5, heat: 2, rep: 3, item: "lighter" } },
+            { label: "What's in it?", outcomes: { rp: 2, xp: 2 } }
+          ]},
+          { npcLine: "Always hide your stacks smart.", text: "Where you wanna stash your cash?", options: [
+            { label: "In my sock.", outcomes: { cash: 10, heat: 1, item: "medkit" } },
+            { label: "Bury it.", outcomes: { rp: 1, rep: 1 } }
+          ]},
+          { npcLine: "Stay sharp out there.", text: "Someone watching you?", options: [
+            { label: "Ignore it.", outcomes: { heat: 2, rep: 2 } },
+            { label: "Take the alley.", outcomes: { energy: -1, xp: 3 } }
+          ]},
+          { npcLine: "Temptation’s part of the game.", text: "You see a dropped bag.", options: [
+            { label: "Grab and run.", outcomes: { cash: 20, heat: 3 } },
+            { label: "Leave it.", outcomes: { rp: 1 } }
+          ]},
+          { npcLine: "Sometimes it’s best to ignore the noise.", text: "You get a weird text on the burner.", options: [
+            { label: "Reply.", outcomes: { rp: 1, xp: 1 } },
+            { label: "Ignore it.", outcomes: { rep: 1 } }
+          ]}
+        ],
+        combat: { enemy: "Thug", playerAtk: 4, enemyAtk: 3, energyCost: 1, reward: { xp: 5, rep: 2, heat: 1 } }
+      };
+
+      function icon(k) { return icons[k] || ''; }
+      function bar(current, max, cls) {
+        const pct = Math.max(0, (current / max) * 100);
+        return `<div class='bar-container'><div class='bar ${cls}' style='width:${pct}%;'></div></div>`;
       }
-      currentStep++;
+      function showInventory() {
+        return state.inventory.length ? `<div class='inventory-bar'>🎒 Inventory: ${state.inventory.join(", ")}</div>` : "";
+      }
+      function render() {
+        if (state.step === 0) {
+          game.innerHTML = `<div class='question-box'><h2>${data.npc.portrait} ${data.npc.name}</h2><p>${data.npc.intro}</p><button onclick='next()'>📱 Continue</button></div>`;
+        } else if (state.step <= data.questions.length && !state.reward) {
+          const q = data.questions[state.step - 1];
+          let html = `<div class='question-box'><h3>Q${state.step}</h3><p>💬 ${q.npcLine}</p><p>${q.text}</p>`;
+          q.options.forEach((opt, i) => html += `<button onclick='choose(${i})'>${opt.label}</button>`);
+          html += `</div>`;
+          game.innerHTML = html;
+        } else if (state.reward) {
+          let html = `<div class='question-result-box'><h3>✅ Result</h3>`;
+          for (let k in state.reward) {
+            if (k === "item") {
+              state.inventory.push(state.reward[k]);
+              html += `<p>🎁 Item Gained: ${state.reward[k]}</p>`;
+            } else {
+              state.stats[k] = (state.stats[k] || 0) + state.reward[k];
+              html += `<p>${icon(k)} ${k.toUpperCase()}: ${state.reward[k] >= 0 ? "+" : ""}${state.reward[k]}</p>`;
+            }
+          }
+          html += `<button onclick='next()'>➡️ Continue</button></div>` + showInventory();
+          game.innerHTML = html;
+        } else if (state.step === data.questions.length + 1) {
+          game.innerHTML = `<div class='combat-ui'>
+            <h3>🥊 Combat: ${data.combat.enemy}</h3>
+            <p>❤️ You: ${state.stats.hp}</p>${bar(state.stats.hp, 12, 'hp')}
+            <p>⚡ Energy: ${state.stats.energy}</p>${bar(state.stats.energy, 5, 'energy')}
+            <p>💀 Enemy HP: ${state.enemyHP}</p>${bar(state.enemyHP, 10, 'hp')}
+            <div id='combat-log'>🗨️ Ready to fight</div>
+            <button onclick='fight()'>👊 Attack (⚡ -1)</button>
+            <button onclick='alert("🧰 Inventory system coming soon!")'>🎒 Use Item</button>
+            <button onclick='alert("🧠 Skill system coming soon!")'>🎯 Use Skill</button>
+          </div>` + showInventory();
+        } else {
+          localStorage.setItem("bb_save", JSON.stringify(state.stats));
+          game.innerHTML = `<div class='reward-box'><h3>🏁 Prologue Complete</h3>
+            ${Object.keys(state.stats).map(k => `<p>${icon(k)} ${k.toUpperCase()}: ${state.stats[k]}</p>`).join('')}
+            ${state.inventory.length ? `<p>🎒 Inventory: ${state.inventory.join(", ")}</p>` : ""}
+            <p>📲 Redirecting to Burner OS...</p>
+          </div>`;
+          setTimeout(() => window.location.href = "https://bizzybullets.blogspot.com/p/burner-os.html?m=1", 3000);
+        }
+      }
+
+      window.choose = i => {
+        state.reward = data.questions[state.step - 1].options[i].outcomes;
+        render();
+      };
+      window.next = () => {
+        state.reward = null;
+        state.step++;
+        render();
+      };
+      window.fight = () => {
+        const c = data.combat;
+        if (state.stats.energy < c.energyCost) return document.getElementById("combat-log").innerText = "⚠️ Not enough energy!";
+        state.stats.energy -= c.energyCost;
+        state.enemyHP -= c.playerAtk;
+        state.stats.hp -= c.enemyAtk;
+        if (state.enemyHP <= 0) {
+          for (let k in c.reward) state.stats[k] = (state.stats[k] || 0) + c.reward[k];
+          state.step++;
+          render();
+        } else if (state.stats.hp <= 0) {
+          game.innerHTML = `<div class='game-over-box'><h3>💀 Game Over</h3><p>You were defeated!</p><button onclick='location.reload()'>🔁 Reset Game</button></div>`;
+        } else {
+          document.getElementById("combat-log").innerText = `⚡ You hit for ${c.playerAtk}. 💀 Enemy hit for ${c.enemyAtk}`;
+          render();
+        }
+      };
       render();
-    } else if (playerStats.hp <= 0) {
-      document.getElementById("combat-log").innerText = "💀 You were defeated!";
-      setTimeout(() => window.location.href = "/p/burner-os.html", 2000);
-    } else {
-      document.getElementById("combat-log").innerText =
-        `⚡ You hit for ${prologueData.combat.playerAtk}. 💀 Enemy hit for ${prologueData.combat.enemyAtk}`;
-      renderCombat();
-    }
-  };
-
-  function renderSummary() {
-    const el = document.getElementById("game");
-    let html = `<div class="reward-box"><h3>🏁 Prologue Complete</h3>`;
-    for (let k in playerStats) {
-      html += `<p>${icon(k)} ${k.toUpperCase()}: ${playerStats[k]}</p>`;
-    }
-    html += `<p>📲 Redirecting to Burner OS...</p></div>`;
-    el.innerHTML = html;
-    setTimeout(() => window.location.href = "/p/burner-os.html", 3000);
-  }
-
-  window.choose = function (i) {
-    questionReward = prologueData.questions[currentStep - 1].options[i].outcomes;
-    render();
-  };
-
-  window.nextQuestion = function () {
-    questionReward = null;
-    currentStep++;
-    render();
-  };
-
-  window.useItem = function () {
-    alert("🧰 Inventory system coming soon!");
-  };
-
-  window.useSkill = function () {
-    alert("🧠 Skill system coming soon!");
-  };
-
-  render();
-};
-</script>
+    };
+  </script>
+</body>
+</html>
