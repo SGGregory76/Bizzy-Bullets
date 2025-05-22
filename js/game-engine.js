@@ -37,29 +37,31 @@ function performAction(actionId) {
   if (actionId === "Fight") runCombat();
 }
 
-function runCombat() {
-  const enemy = getRandomEnemy();
-  console.log(`Encountered ${enemy.name}`);
-
-  while (enemy.hp > 0 && gameData.player.hp > 0) {
-    const damageToEnemy = Math.max(0, gameData.player.atk - enemy.def);
-    enemy.hp -= damageToEnemy;
-
-    const damageToPlayer = Math.max(0, enemy.atk - gameData.player.def);
-    gameData.player.hp -= damageToPlayer;
-
-    console.log(`You dealt ${damageToEnemy} to ${enemy.name}.`);
-    console.log(`${enemy.name} dealt ${damageToPlayer} to you.`);
+window.combatTurn = function () {
+  if (playerStats.energy < prologueData.combat.energyCost) {
+    document.getElementById("combat-log").innerText = "⚠️ Not enough energy!";
+    return;
   }
+  playerStats.energy -= prologueData.combat.energyCost;
+  enemyHP -= prologueData.combat.playerAtk;
+  playerStats.hp -= prologueData.combat.enemyAtk;
 
-  if (gameData.player.hp <= 0) {
-    handlePlayerDefeat();
+  if (enemyHP <= 0) {
+    for (let k in prologueData.combat.reward) {
+      playerStats[k] = (playerStats[k] || 0) + prologueData.combat.reward[k];
+    }
+    currentStep++;
+    render();
+  } else if (playerStats.hp <= 0) {
+    document.getElementById("combat-log").innerText = "💀 You were defeated!";
+    setTimeout(() => window.location.href = "/p/burner-os.html", 2000);
   } else {
-    console.log(`Defeated ${enemy.name}!`);
-    updatePlayerStat("xp", enemy.xpReward);
-    updatePlayerStat("cash", enemy.cashReward);
+    document.getElementById("combat-log").innerText =
+      `⚡ You hit for ${prologueData.combat.playerAtk}. 💀 Enemy hit for ${prologueData.combat.enemyAtk}`;
+    renderCombat();
   }
-}
+};
+
 
 function getRandomEnemy() {
   const enemies = gameData.enemies;
