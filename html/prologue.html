@@ -15,12 +15,10 @@
       height: 100%;
       text-align: center;
     }
-
     h1, h2, h3, h4, h5, h6, p {
       color: #fff !important;
       margin: 0.5em 0;
     }
-
     #memorial {
       opacity: 0;
       transform: translateY(-10px);
@@ -29,12 +27,10 @@
       text-align: center;
       padding-top: 1em;
     }
-
     #memorial.show {
       opacity: 1;
       transform: translateY(0);
     }
-
     #game {
       width: 100%;
       max-width: 720px;
@@ -42,7 +38,6 @@
       padding: 1em;
       text-align: center;
     }
-
     .question-box, .question-result-box, .combat-ui, .reward-box, .game-over-box {
       background: #1e1e1e;
       border: 2px solid #444;
@@ -52,7 +47,6 @@
       text-align: center;
       color: #eee;
     }
-
     .bar-container {
       background: #444;
       border-radius: 4px;
@@ -60,15 +54,12 @@
       margin: 0.5em 0;
       overflow: hidden;
     }
-
     .bar {
       height: 100%;
       transition: width 0.3s ease;
     }
-
     .bar.hp { background: #e74c3c; }
     .bar.energy { background: #2ecc71; }
-
     button {
       width: 100%;
       max-width: 360px;
@@ -82,28 +73,25 @@
       cursor: pointer;
       display: block;
     }
-
     button:hover {
       background: #555;
     }
-
     .inventory-bar {
       font-size: 0.95em;
       margin-top: 1em;
       color: #bbb;
     }
-
     a {
       color: #4ecfff;
       text-decoration: underline;
     }
-
     a:hover {
       color: #87f5ff;
     }
   </style>
 </head>
 <body>
+
   <div id="memorial">
     <h3>In loving memory of VJA 420</h3>
     <p>Grateful for our time 💚<br>12/28/54 – 10/17/24</p>
@@ -113,7 +101,63 @@
   <div id="game">Loading...</div>
 
   <script>
-    let prologueData = {};
+    let prologueData = {
+      npc: {
+        name: "Bizzy",
+        intro: "Yo, you lookin’ to level up? Take this burner – your new hustle starts now.",
+        portrait: "🥋"
+      },
+      questions: [
+        {
+          npcLine: "Let’s see how you handle a little run.",
+          text: "You down to run this package?",
+          options: [
+            { label: "No questions asked.", outcomes: { xp: 5, heat: 2, rep: 3, item: "lighter" } },
+            { label: "What's in it?", outcomes: { rp: 2, xp: 2 } }
+          ]
+        },
+        {
+          npcLine: "Always hide your stacks smart.",
+          text: "Where you wanna stash your cash?",
+          options: [
+            { label: "In my sock.", outcomes: { cash: 10, heat: 1, item: "medkit" } },
+            { label: "Bury it.", outcomes: { rp: 1, rep: 1 } }
+          ]
+        },
+        {
+          npcLine: "Stay sharp out there.",
+          text: "Someone watching you?",
+          options: [
+            { label: "Ignore it.", outcomes: { heat: 2, rep: 2 } },
+            { label: "Take the alley.", outcomes: { energy: -1, xp: 3 } }
+          ]
+        },
+        {
+          npcLine: "Temptation’s part of the game.",
+          text: "You see a dropped bag.",
+          options: [
+            { label: "Grab and run.", outcomes: { cash: 20, heat: 3 } },
+            { label: "Leave it.", outcomes: { rp: 1 } }
+          ]
+        },
+        {
+          npcLine: "Sometimes it’s best to ignore the noise.",
+          text: "You get a weird text on the burner.",
+          options: [
+            { label: "Reply.", outcomes: { rp: 1, xp: 1 } },
+            { label: "Ignore it.", outcomes: { rep: 1 } }
+          ]
+        }
+      ],
+      combat: {
+        enemy: "Thug",
+        playerAtk: 4,
+        enemyAtk: 3,
+        energyCost: 1,
+        reward: { xp: 5, rep: 2, heat: 1 }
+      }
+    };
+
     let currentStep = 0;
     let questionReward = null;
     let playerStats = { hp: 12, energy: 5, cash: 0, rp: 0, xp: 0, rep: 0, heat: 0 };
@@ -128,10 +172,6 @@
 
     function render() {
       const el = document.getElementById("game");
-      if (!prologueData.questions) {
-        el.innerHTML = `<p>⚠️ Prologue data not loaded.</p>`;
-        return;
-      }
 
       if (currentStep === 0) {
         el.innerHTML = `<div class="question-box">
@@ -243,13 +283,8 @@
     }
 
     window.onload = () => {
-      fetch("/json/prologue.json")
-        .then(res => res.json())
-        .then(json => {
-          prologueData = json;
-          document.getElementById("memorial").classList.add("show");
-          render();
-        });
+      document.getElementById("memorial").classList.add("show");
+      render();
     };
   </script>
 </body>
