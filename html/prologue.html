@@ -5,20 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Bizzy Bullets - Prologue</title>
   <style>
-    html, body {
-      background: #111 !important;
-      color: #f0f0f0 !important;
+    /* Scoped container to prevent global CSS leaks */
+    #prologue-root {
       font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
+      background: #111;
+      color: #f0f0f0;
       width: 100%;
-      height: 100%;
+      max-width: 100%;
       text-align: center;
+      padding: 0;
+      margin: 0;
     }
-    h1, h2, h3, h4, h5, h6, p {
-      color: #fff !important;
+
+    #prologue-root h1,
+    #prologue-root h2,
+    #prologue-root h3,
+    #prologue-root h4,
+    #prologue-root h5,
+    #prologue-root h6,
+    #prologue-root p {
+      color: #fff;
       margin: 0.5em 0;
     }
+
     #memorial {
       opacity: 0;
       transform: translateY(-10px);
@@ -27,18 +36,24 @@
       text-align: center;
       padding-top: 1em;
     }
+
     #memorial.show {
       opacity: 1;
       transform: translateY(0);
     }
+
     #game {
       width: 100%;
       max-width: 720px;
       margin: 0 auto;
       padding: 1em;
-      text-align: center;
     }
-    .question-box, .question-result-box, .combat-ui, .reward-box, .game-over-box {
+
+    #prologue-root .question-box,
+    #prologue-root .question-result-box,
+    #prologue-root .combat-ui,
+    #prologue-root .reward-box,
+    #prologue-root .game-over-box {
       background: #1e1e1e;
       border: 2px solid #444;
       border-radius: 10px;
@@ -47,20 +62,24 @@
       text-align: center;
       color: #eee;
     }
-    .bar-container {
+
+    #prologue-root .bar-container {
       background: #444;
       border-radius: 4px;
       height: 20px;
       margin: 0.5em 0;
       overflow: hidden;
     }
-    .bar {
+
+    #prologue-root .bar {
       height: 100%;
       transition: width 0.3s ease;
     }
-    .bar.hp { background: #e74c3c; }
-    .bar.energy { background: #2ecc71; }
-    button {
+
+    #prologue-root .bar.hp { background: #e74c3c; }
+    #prologue-root .bar.energy { background: #2ecc71; }
+
+    #prologue-root button {
       width: 100%;
       max-width: 360px;
       margin: 0.5em auto;
@@ -73,32 +92,36 @@
       cursor: pointer;
       display: block;
     }
-    button:hover {
+
+    #prologue-root button:hover {
       background: #555;
     }
-    .inventory-bar {
+
+    #prologue-root .inventory-bar {
       font-size: 0.95em;
       margin-top: 1em;
       color: #bbb;
     }
-    a {
+
+    #prologue-root a {
       color: #4ecfff;
       text-decoration: underline;
     }
-    a:hover {
+
+    #prologue-root a:hover {
       color: #87f5ff;
     }
   </style>
 </head>
 <body>
-
-  <div id="memorial">
-    <h3>In loving memory of VJA 420</h3>
-    <p>Grateful for our time 💚<br>12/28/54 – 10/17/24</p>
-    <p style="font-size:1.5em;">“🙏”</p>
+  <div id="prologue-root">
+    <div id="memorial">
+      <h3>In loving memory of VJA 420</h3>
+      <p>Grateful for our time 💚<br>12/28/54 – 10/17/24</p>
+      <p style="font-size:1.5em;">“🙏”</p>
+    </div>
+    <div id="game">Loading...</div>
   </div>
-
-  <div id="game">Loading...</div>
 
   <script>
     let prologueData = {
