@@ -118,5 +118,15 @@
     <p style="font-size:1.5em;">“🙏”</p>
   </div>
   <div id="game">Loading...</div>
+
+  <script>
+    window.onload = function () {
+      document.getElementById("memorial").classList.add("show");
+
+      // Game framework initialization point
+      const game = document.getElementById("game");
+      game.innerHTML = `<div class='question-box'><h3>Welcome</h3><p>The game is ready to begin.</p><button onclick='alert("Start pressed")'>Start Game</button></div>`;
+    };
+  </script>
 </body>
 </html>
