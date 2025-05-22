@@ -147,7 +147,7 @@ function nextQuestion() {
 }
 
 window.onload = function () {
-  fetch("/json/prologue.json")
+  fetch("https://raw.githubusercontent.com/SGGregory76/Bizzy-Bullets/main/json/prologue.json")
     .then(res => res.json())
     .then(json => {
       prologueData = json;
