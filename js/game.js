@@ -1,79 +1,71 @@
-let prologueData = {};
 let currentStep = 0;
+let questionReward = null;
 let playerStats = { hp: 12, energy: 5, cash: 0, rp: 0, xp: 0, rep: 0, heat: 0 };
-let playerInventory = { energyDrink: 1, medKit: 1 };
-let triesLeft, stashLocation, stashFound, enemyHP;
+let enemyHP = 10;
 
-function icon(k) {
-  return { hp: '❤️', energy: '⚡', cash: '💵', rp: '🧠', xp: '⭐', rep: '📢', heat: '🔥' }[k] || '';
+const icon = k => ({ hp: '❤️', energy: '⚡', cash: '💵', rp: '🧠', xp: '⭐', rep: '📢', heat: '🔥' }[k] || '');
+
+function renderBar(current, max, className) {
+  const pct = Math.max(0, (current / max) * 100);
+  return `<div class='bar-container'><div class='bar ${className}' style='width:${pct}%;'></div></div>`;
 }
 
 function render() {
-  const container = document.getElementById('game');
-  container.innerHTML = '';
+  const el = document.getElementById("game");
+  el.innerHTML = "";
 
   if (currentStep === 0) {
-    container.innerHTML = `<div class="question-box">
-      <h1>${prologueData.npc.portrait} ${prologueData.npc.name}</h1>
+    el.innerHTML = `<div class="question-box">
+      <h2>${prologueData.npc.portrait} ${prologueData.npc.name}</h2>
       <p>"${prologueData.npc.intro}"</p>
       <button onclick="nextQuestion()">📱 Continue</button>
     </div>`;
-  } else if (currentStep <= 5) {
+  } else if (currentStep <= prologueData.questions.length && !questionReward) {
     const q = prologueData.questions[currentStep - 1];
-    let html = `<div class="question-box"><h3>Q${currentStep}</h3><p>${q.text}</p>`;
+    let html = `<div class="question-box"><h3>Q${currentStep}</h3><p>💬 ${q.npcLine}</p><p>${q.text}</p>`;
     q.options.forEach((opt, i) => {
       html += `<button onclick="choose(${i})">${opt.label}</button>`;
     });
-    html += '</div>';
-    container.innerHTML = html;
+    html += "</div>";
+    el.innerHTML = html;
+  } else if (questionReward) {
+    let html = `<div class="question-result-box"><h3>✅ Result</h3>`;
+    for (let k in questionReward) {
+      html += `<p>${icon(k)} ${k.toUpperCase()}: ${questionReward[k] >= 0 ? "+" : ""}${questionReward[k]}</p>`;
+      playerStats[k] = (playerStats[k] || 0) + questionReward[k];
+    }
+    html += `<button onclick="nextQuestion()">➡️ Continue</button></div>`;
+    el.innerHTML = html;
   } else if (currentStep === 6) {
     renderCombat();
   } else if (currentStep === 7) {
-    renderCombatResult();
-  } else if (currentStep === 8) {
-    renderStash();
-  } else if (currentStep === 9) {
-    renderStashResult();
-  } else {
-    renderReward();
+    renderSummary();
   }
-}
-
-function nextQuestion() {
-  currentStep++;
-  render();
-}
-
-function choose(optIndex) {
-  const outcomes = prologueData.questions[currentStep - 1].options[optIndex].outcomes;
-  for (let k in outcomes) {
-    playerStats[k] = (playerStats[k] || 0) + outcomes[k];
-  }
-  currentStep++;
-  render();
 }
 
 function renderCombat() {
-  enemyHP = prologueData.combat.enemyStats.hp;
-  const html = `<div class="combat-ui">
-    <h3>👊 Boss Fight: ${prologueData.combat.enemy}</h3>
-    <p>❤️ You: ${playerStats.hp} | ⚡ Energy: ${playerStats.energy}</p>
-    <p>💀 Enemy: ${enemyHP}</p>
-    <button onclick="combatTurn()">👊 Attack (⚡ -${prologueData.combat.playerStats.energyCost})</button>
-    <button onclick="useEnergy()">⚡ Use Energy Drink (${playerInventory.energyDrink})</button>
-    <button onclick="useMedKit()">🩹 Use Med Kit (${playerInventory.medKit})</button>
+  const el = document.getElementById("game");
+  let html = `<div class="combat-ui">
+    <h3>🥊 Combat: ${prologueData.combat.enemy}</h3>
+    <p>❤️ You: ${playerStats.hp}</p>${renderBar(playerStats.hp, 12, 'hp')}
+    <p>⚡ Energy: ${playerStats.energy}</p>${renderBar(playerStats.energy, 5, 'energy')}
+    <p>💀 Enemy HP: ${enemyHP}</p>${renderBar(enemyHP, 10, 'hp')}
+    <div id="combat-log">🗨️ Ready to fight</div>
+    <button onclick="combatTurn()">👊 Attack (⚡ -1)</button>
+    <button onclick="useItem()">🎒 Use Item</button>
+    <button onclick="useSkill()">🎯 Use Skill</button>
   </div>`;
-  document.getElementById('game').innerHTML = html;
+  el.innerHTML = html;
 }
 
 function combatTurn() {
-  if (playerStats.energy < prologueData.combat.playerStats.energyCost) {
-    alert("You're out of energy!");
+  if (playerStats.energy < prologueData.combat.energyCost) {
+    document.getElementById("combat-log").innerText = "⚠️ Not enough energy!";
     return;
   }
-  playerStats.energy -= prologueData.combat.playerStats.energyCost;
-  enemyHP -= prologueData.combat.playerStats.atk;
-  playerStats.hp -= prologueData.combat.enemyStats.atk;
+  playerStats.energy -= prologueData.combat.energyCost;
+  enemyHP -= prologueData.combat.playerAtk;
+  playerStats.hp -= prologueData.combat.enemyAtk;
 
   if (enemyHP <= 0) {
     for (let k in prologueData.combat.reward) {
@@ -82,101 +74,43 @@ function combatTurn() {
     currentStep++;
     render();
   } else if (playerStats.hp <= 0) {
-    for (let k in prologueData.combat.failPenalty) {
-      playerStats[k] = (playerStats[k] || 0) + prologueData.combat.failPenalty[k];
-    }
-    playerStats = { hp: 12, energy: 5, cash: 0, rp: 0, xp: 0, rep: 0, heat: 0 };
-    playerInventory = { energyDrink: 1, medKit: 1 };
-    currentStep = 0;
-    alert("You lost the fight! Stats reset.");
-    render();
+    document.getElementById("combat-log").innerText = "💀 You were defeated!";
+    setTimeout(() => window.location.href = "/p/burner-os.html", 2000);
   } else {
+    document.getElementById("combat-log").innerText =
+      `⚡ You hit for ${prologueData.combat.playerAtk}. 💀 Enemy hit for ${prologueData.combat.enemyAtk}`;
     renderCombat();
   }
 }
 
-function useEnergy() {
-  if (playerInventory.energyDrink > 0) {
-    playerStats.energy += 3;
-    playerInventory.energyDrink--;
-    renderCombat();
-  } else {
-    alert("No energy drinks left!");
-  }
-}
-
-function useMedKit() {
-  if (playerInventory.medKit > 0) {
-    playerStats.hp += 5;
-    playerInventory.medKit--;
-    renderCombat();
-  } else {
-    alert("No med kits left!");
-  }
-}
-
-function renderCombatResult() {
-  let html = `<div class="combat-result-box"><h3>🥊 Combat Complete</h3>`;
-  for (let k in prologueData.combat.reward) {
-    html += `<p>${icon(k)} ${k.toUpperCase()}: +${prologueData.combat.reward[k]}</p>`;
-  }
-  html += `<button onclick="nextQuestion()">➡️ Continue</button></div>`;
-  document.getElementById('game').innerHTML = html;
-}
-
-function renderStash() {
-  triesLeft = prologueData.stashGame.maxTries;
-  stashLocation = Math.floor(Math.random() * 9);
-  stashFound = false;
-
-  let html = `<div class="stash-grid"><h3>🎯 Find the Stash</h3><p>Tries left: ${triesLeft}</p><div class="grid">`;
-  for (let i = 0; i < 9; i++) {
-    html += `<button class="grid-cell" id="cell-${i}" onclick="pickCell(${i}, this)">❓</button>`;
-  }
-  html += '</div></div>';
-  document.getElementById('game').innerHTML = html;
-}
-
-function pickCell(i, el) {
-  if (el.disabled) return;
-  el.disabled = true;
-  triesLeft--;
-  if (i === stashLocation) {
-    el.innerText = '💰';
-    stashFound = true;
-    Object.entries(prologueData.stashGame.reward).forEach(([k, v]) => playerStats[k] += v);
-  } else {
-    el.innerText = '❌';
-  }
-  document.querySelector(".stash-grid p").innerText = `Tries left: ${triesLeft}`;
-  if (triesLeft <= 0 || stashFound) {
-    setTimeout(() => { currentStep++; render(); }, 1000);
-  }
-}
-
-function renderStashResult() {
-  const html = `<div class="stash-result-box">
-    <h3>${stashFound ? '💰 You Found the Stash!' : '🚫 You Failed to Find the Stash'}</h3>
-    <p>${stashFound ? 'Nice pull. Bonus XP and Cash awarded.' : 'Better luck next time.'}</p>
-    <button onclick="nextQuestion()">➡️ Continue</button>
-  </div>`;
-  document.getElementById('game').innerHTML = html;
-}
-
-function renderReward() {
-  let html = `<div class="reward-box"><h3>🏆 Mission Complete</h3>`;
+function renderSummary() {
+  const el = document.getElementById("game");
+  let html = `<div class="reward-box"><h3>🏁 Prologue Complete</h3>`;
   for (let k in playerStats) {
     html += `<p>${icon(k)} ${k.toUpperCase()}: ${playerStats[k]}</p>`;
   }
-  html += `<p>📦 Inventory: ⚡ Drinks (${playerInventory.energyDrink}) 🩹 Med Kits (${playerInventory.medKit})</p>`;
-  html += `<p>📲 Launching Burner OS...</p></div>`;
-  document.getElementById('game').innerHTML = html;
-  setTimeout(() => { window.location.href = '/p/burner-os.html'; }, 3000);
+  html += `<p>📲 Redirecting to Burner OS...</p></div>`;
+  el.innerHTML = html;
+  setTimeout(() => window.location.href = "/p/burner-os.html", 3000);
 }
 
-fetch('prologueData.json')
-  .then(res => res.json())
-  .then(data => {
-    prologueData = data;
-    render();
-  });
+function useItem() {
+  alert("🧰 Inventory system coming soon!");
+}
+
+function useSkill() {
+  alert("🧠 Skill system coming soon!");
+}
+
+function choose(i) {
+  questionReward = prologueData.questions[currentStep - 1].options[i].outcomes;
+  render();
+}
+
+function nextQuestion() {
+  questionReward = null;
+  currentStep++;
+  render();
+}
+
+window.onload = render;
