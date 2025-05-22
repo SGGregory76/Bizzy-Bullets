@@ -1,56 +1,85 @@
-body {
-  background: #111;
-  color: #fff;
-  font-family: sans-serif;
-  margin: 0;
-  padding: 0;
-}
-#game {
-  max-width: 480px;
-  margin: auto;
-  padding: 1em;
-}
-h2, h3, p {
-  text-align: center;
-  color: #fff;
-  margin: 0.5em 0;
-}
-.question-box, .question-result-box, .combat-ui, .reward-box, .game-over-box {
-  background: #222;
-  border: 2px solid #444;
-  border-radius: 8px;
-  padding: 1em;
-  margin: 1em 0;
-  text-align: center;
-  color: #fff;
-}
-.bar-container {
-  background: #555;
-  border-radius: 5px;
-  margin: 0.5em 0;
-  height: 20px;
-  overflow: hidden;
-}
-.bar {
-  height: 100%;
-  transition: width 0.3s ease;
-}
-.bar.hp { background: red; }
-.bar.energy { background: limegreen; }
-button {
-  width: 100%;
-  margin: 0.5em 0;
-  padding: 0.75em;
-  background: #444;
-  color: #fff;
-  font-size: 1em;
-  border: none;
-  border-radius: 5px;
-}
-button:hover { background: #666; }
-.inventory-bar {
-  font-size: 0.9em;
-  margin-top: 1em;
-  color: #ccc;
-  text-align: center;
-}
+<style>
+  body {
+    background: #111;
+    color: #f0f0f0;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 2em 1em;
+    text-align: center;
+  }
+
+  h1, h2, h3, h4 {
+    color: #fff;
+    margin: 0.5em 0;
+  }
+
+  #game {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 1em;
+  }
+
+  .question-box, .question-result-box, .combat-ui, .reward-box, .game-over-box {
+    background: #1e1e1e;
+    border: 2px solid #444;
+    border-radius: 10px;
+    padding: 1em;
+    margin: 1.5em 0;
+    text-align: center;
+  }
+
+  .bar-container {
+    background: #444;
+    border-radius: 4px;
+    height: 20px;
+    margin: 0.5em 0;
+    overflow: hidden;
+  }
+
+  .bar {
+    height: 100%;
+    transition: width 0.3s ease;
+  }
+
+  .bar.hp { background: #e74c3c; }
+  .bar.energy { background: #2ecc71; }
+
+  button {
+    width: 100%;
+    max-width: 360px;
+    margin: 0.5em auto;
+    padding: 0.75em 1em;
+    background: #333;
+    color: #fff;
+    font-size: 1em;
+    border: 1px solid #666;
+    border-radius: 6px;
+    cursor: pointer;
+    display: block;
+  }
+
+  button:hover {
+    background: #555;
+  }
+
+  .inventory-bar {
+    font-size: 0.95em;
+    margin-top: 1em;
+    color: #bbb;
+  }
+
+  a {
+    color: #4ecfff;
+    text-decoration: underline;
+  }
+
+  a:hover {
+    color: #87f5ff;
+  }
+
+  footer {
+    margin-top: 2em;
+    font-size: 0.9em;
+    color: #777;
+  }
+</style>
