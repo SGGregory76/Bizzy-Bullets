@@ -1,0 +1,121 @@
+{
+  "npc": {
+    "name": "Bizzy",
+    "intro": "Yo, you lookin\u2019 to level up? Take this burner \u2013 your new hustle starts now.",
+    "portrait": "\ud83e\udd4b"
+  },
+  "questions": [
+    {
+      "npcLine": "Let\u2019s see how you handle a little run.",
+      "text": "You down to run this package?",
+      "options": [
+        {
+          "label": "No questions asked.",
+          "outcomes": {
+            "xp": 5,
+            "heat": 2,
+            "rep": 3,
+            "item": "lighter"
+          }
+        },
+        {
+          "label": "What's in it?",
+          "outcomes": {
+            "rp": 2,
+            "xp": 2
+          }
+        }
+      ]
+    },
+    {
+      "npcLine": "Always hide your stacks smart.",
+      "text": "Where you wanna stash your cash?",
+      "options": [
+        {
+          "label": "In my sock.",
+          "outcomes": {
+            "cash": 10,
+            "heat": 1,
+            "item": "medkit"
+          }
+        },
+        {
+          "label": "Bury it.",
+          "outcomes": {
+            "rp": 1,
+            "rep": 1
+          }
+        }
+      ]
+    },
+    {
+      "npcLine": "Stay sharp out there.",
+      "text": "Someone watching you?",
+      "options": [
+        {
+          "label": "Ignore it.",
+          "outcomes": {
+            "heat": 2,
+            "rep": 2
+          }
+        },
+        {
+          "label": "Take the alley.",
+          "outcomes": {
+            "energy": -1,
+            "xp": 3
+          }
+        }
+      ]
+    },
+    {
+      "npcLine": "Temptation\u2019s part of the game.",
+      "text": "You see a dropped bag.",
+      "options": [
+        {
+          "label": "Grab and run.",
+          "outcomes": {
+            "cash": 20,
+            "heat": 3
+          }
+        },
+        {
+          "label": "Leave it.",
+          "outcomes": {
+            "rp": 1
+          }
+        }
+      ]
+    },
+    {
+      "npcLine": "Sometimes it\u2019s best to ignore the noise.",
+      "text": "You get a weird text on the burner.",
+      "options": [
+        {
+          "label": "Reply.",
+          "outcomes": {
+            "rp": 1,
+            "xp": 1
+          }
+        },
+        {
+          "label": "Ignore it.",
+          "outcomes": {
+            "rep": 1
+          }
+        }
+      ]
+    }
+  ],
+  "combat": {
+    "enemy": "Thug",
+    "playerAtk": 4,
+    "enemyAtk": 3,
+    "energyCost": 1,
+    "reward": {
+      "xp": 5,
+      "rep": 2,
+      "heat": 1
+    }
+  }
+}
