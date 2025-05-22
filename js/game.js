@@ -1,3 +1,4 @@
+let prologueData = {};
 let currentStep = 0;
 let questionReward = null;
 let playerStats = { hp: 12, energy: 5, cash: 0, rp: 0, xp: 0, rep: 0, heat: 0 };
@@ -9,13 +10,13 @@ function renderBar(current, max, className) {
   const pct = Math.max(0, (current / max) * 100);
   return `<div class='bar-container'><div class='bar ${className}' style='width:${pct}%;'></div></div>`;
 }
-setTimeout(() => {
-  document.getElementById("memorial").classList.add("show");
-}, 300);
 
 function render() {
   const el = document.getElementById("game");
-  el.innerHTML = "";
+  if (!prologueData.questions) {
+    el.innerHTML = `<p>⚠️ Prologue data not loaded.</p>`;
+    return;
+  }
 
   if (currentStep === 0) {
     el.innerHTML = `<div class="question-box">
@@ -34,14 +35,18 @@ function render() {
   } else if (questionReward) {
     let html = `<div class="question-result-box"><h3>✅ Result</h3>`;
     for (let k in questionReward) {
-      html += `<p>${icon(k)} ${k.toUpperCase()}: ${questionReward[k] >= 0 ? "+" : ""}${questionReward[k]}</p>`;
-      playerStats[k] = (playerStats[k] || 0) + questionReward[k];
+      if (k === "item") {
+        html += `<p>🎁 Item Gained: ${questionReward[k]}</p>`;
+      } else {
+        playerStats[k] = (playerStats[k] || 0) + questionReward[k];
+        html += `<p>${icon(k)} ${k.toUpperCase()}: ${questionReward[k] >= 0 ? "+" : ""}${questionReward[k]}</p>`;
+      }
     }
     html += `<button onclick="nextQuestion()">➡️ Continue</button></div>`;
     el.innerHTML = html;
-  } else if (currentStep === 6) {
+  } else if (currentStep === prologueData.questions.length + 1) {
     renderCombat();
-  } else if (currentStep === 7) {
+  } else {
     renderSummary();
   }
 }
@@ -66,6 +71,7 @@ function combatTurn() {
     document.getElementById("combat-log").innerText = "⚠️ Not enough energy!";
     return;
   }
+
   playerStats.energy -= prologueData.combat.energyCost;
   enemyHP -= prologueData.combat.playerAtk;
   playerStats.hp -= prologueData.combat.enemyAtk;
@@ -77,8 +83,12 @@ function combatTurn() {
     currentStep++;
     render();
   } else if (playerStats.hp <= 0) {
-    document.getElementById("combat-log").innerText = "💀 You were defeated!";
-    setTimeout(() => window.location.href = "/p/burner-os.html", 2000);
+    document.getElementById("game").innerHTML = `
+      <div class='game-over-box'>
+        <h3>💀 Game Over</h3>
+        <p>You were defeated!</p>
+        <button onclick='location.reload()'>🔁 Restart</button>
+      </div>`;
   } else {
     document.getElementById("combat-log").innerText =
       `⚡ You hit for ${prologueData.combat.playerAtk}. 💀 Enemy hit for ${prologueData.combat.enemyAtk}`;
@@ -94,6 +104,7 @@ function renderSummary() {
   }
   html += `<p>📲 Redirecting to Burner OS...</p></div>`;
   el.innerHTML = html;
+  localStorage.setItem("bb_save", JSON.stringify(playerStats));
   setTimeout(() => window.location.href = "/p/burner-os.html", 3000);
 }
 
@@ -116,4 +127,12 @@ function nextQuestion() {
   render();
 }
 
-window.onload = render;
+// Load from external JSON file
+window.onload = function () {
+  fetch("/json/prologue.json")
+    .then(res => res.json())
+    .then(json => {
+      prologueData = json;
+      render();
+    });
+};
