@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bizzy Bullets – Burner OS</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: transparent;
+      color: #eee;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+    }
+
+    .shell-container {
+      display: flex;
+      justify-content: center;
+      padding: 16px 0;
+      background: transparent;
+    }
+
+    .phone-shell {
+      display: flex;
+      flex-direction: column;
+      width: 360px;
+      height: 640px;
+      background: #111;
+      border: 2px solid #333;
+      border-radius: 40px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+    }
+
+    .os-header {
+      background: #333;
+      padding: 12px;
+      border-bottom: 2px solid #444;
+    }
+
+    .page-title {
+      margin: 0;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.7);
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 6px;
+    }
+
+    .hub-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      padding: 6px;
+      background: #1a1a1a;
+    }
+
+    .hub-card {
+      background: #2a2a2a;
+      border-radius: 12px;
+      padding: 12px 0;
+      color: #eee;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .hub-card:hover {
+      background: #3a3a3a;
+      transform: translateY(-2px);
+    }
+
+    .hub-card .icon {
+      font-size: 1.8rem;
+      margin-bottom: 4px;
+    }
+
+    .hub-card .label {
+      font-size: 0.75rem;
+      color: #ddd;
+    }
+
+    .stats-hub {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 6px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      border-bottom: 1px solid #333;
+      gap: 4px;
+      overflow-x: auto;
+    }
+
+    .stats-hub span {
+      flex: 0 0 auto;
+      min-width: 64px;
+      text-align: center;
+      white-space: nowrap;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .iframe-container {
+      position: relative;
+      flex: 1;
+      background: #000;
+    }
+
+    #content-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: none;
+    }
+
+    #iframe-placeholder {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .os-footer {
+      height: 20px;
+      background: #222;
+      border-top: 1px solid #333;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="shell-container">
+    <div class="phone-shell">
+
+      <!-- Header -->
+      <header class="os-header">
+        <h2 class="page-title">🔥 Burner OS</h2>
+      </header>
+
+      <!-- Hub Navigation -->
+      <nav class="hub-grid">
+        <div class="hub-card" data-src="/p/missions.html?m=1">
+          <div class="icon">📜</div>
+          <div class="label">Missions</div>
+        </div>
+        <div class="hub-card" data-src="/p/contacts.html?m=1">
+          <div class="icon">🤝</div>
+          <div class="label">Contacts</div>
+        </div>
+        <div class="hub-card" data-src="/p/inventory.html?m=1">
+          <div class="icon">🎒</div>
+          <div class="label">Inventory</div>
+        </div>
+        <div class="hub-card" data-src="/p/crafting-lab-loading-recipes-active-jobs.html?m=1">
+          <div class="icon">⚒️</div>
+          <div class="label">Craft Lab</div>
+        </div>
+        <div class="hub-card" data-src="/p/maps.html?m=1">
+          <div class="icon">🗺️</div>
+          <div class="label">Map</div>
+        </div>
+        <div class="hub-card" data-src="/p/settings.html?m=1">
+          <div class="icon">⚙️</div>
+          <div class="label">Settings</div>
+        </div>
+      </nav>
+
+      <!-- Stats Display -->
+      <div class="stats-hub">
+        <span id="hub-health">❤️ HP</span>
+        <span id="hub-energy">⚡ EN</span>
+        <span id="hub-cash">💰 0</span>
+        <span id="hub-heat">🔥 0</span>
+        <span id="hub-rep">🧢 0</span>
+      </div>
+
+      <!-- Main Content Frame -->
+      <div class="iframe-container">
+        <iframe id="content-frame" src="" frameborder="0"></iframe>
+        <div id="iframe-placeholder">Tap an icon to open</div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="os-footer"></footer>
+    </div>
+  </div>
+
+  <!-- Navigation Script -->
+  <script>
+    document.querySelectorAll('.hub-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.getElementById('iframe-placeholder').style.display = 'none';
+        const ifr = document.getElementById('content-frame');
+        ifr.style.display = 'block';
+        ifr.src = card.dataset.src + '&t=' + Date.now();
+      });
+    });
+  </script>
+
+  <!-- Stat Loader Script -->
+  <script>
+    const save = JSON.parse(localStorage.getItem("bb_save") || "{}");
+
+    const safeStat = (label, value) =>
+      `<span style="min-width:64px; display:inline-block;">${label}: <strong>${value}</strong></span>`;
+
+    document.getElementById("hub-health").innerHTML = safeStat("❤️ HP", `${save.hp ?? 0}/12`);
+    document.getElementById("hub-energy").innerHTML = safeStat("⚡ EN", `${save.energy ?? 0}/5`);
+    document.getElementById("hub-cash").innerHTML = safeStat("💰", save.cash ?? 0);
+    document.getElementById("hub-heat").innerHTML = safeStat("🔥", save.heat ?? 0);
+    document.getElementById("hub-rep").innerHTML = safeStat("🧢", save.rep ?? 0);
+  </script>
+
+</body>
+</html>
