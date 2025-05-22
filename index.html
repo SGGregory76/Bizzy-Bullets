@@ -1,28 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bizzy Bullets - Prologue</title>
-  
-      <link rel="stylesheet" href="style.css">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bizzy Bullets - Simulator</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="memorial">
-    <h3>In loving memory of VJA 420</h3>
-    <p>Grateful for our time 💚<br>12/28/54 – 10/17/24</p>
-    <p style="font-size:1.5em;">“🙏”</p>
+  <h1 style="text-align:center; font-size:2rem;">Bizzy Bullets</h1>
+
+  <div id="hud">
+    <h2 class="section-title">Player Stats</h2>
+    <p>Name: <span id="playerName">Player One</span></p>
+    <p>Cash: <span id="cash">0</span></p>
+    <p>HP: <span id="hp">12</span></p>
+    <p>XP: <span id="xp">0</span></p>
+    <p>Level: <span id="level">1</span></p>
+    <p>Heat: <span id="heat">0</span></p>
+    <p>Energy: <span id="energy">5</span></p>
   </div>
-  <div id="game">Loading...</div>
 
+  <div class="section">
+    <h2 class="section-title">Actions</h2>
+    <button id="btnSell">Sell</button>
+    <button id="btnFight">Fight</button>
+    <button id="btnRest">Rest</button>
+  </div>
+
+  <div id="inventory" class="section">
+    <h2 class="section-title">Inventory</h2>
+    <p>No items yet.</p>
+  </div>
+
+  <div id="log" class="section">
+    <h2 class="section-title">Activity Log</h2>
+    <p>Welcome to Bizzy Bullets. Select an action to begin.</p>
+  </div>
+
+  <!-- JS Scripts -->
+  <script src="game-data.js"></script>
+  <script src="game-engine.js"></script>
+  <script src="ui-handler.js"></script>
   <script>
-    window.onload = function () {
-      document.getElementById("memorial").classList.add("show");
+    // Example init for log
+    function showMessage(msg) {
+      const log = document.getElementById("log");
+      const p = document.createElement("p");
+      p.textContent = msg;
+      log.appendChild(p);
+    }
 
-      // Game framework initialization point
-      const game = document.getElementById("game");
-      game.innerHTML = `<div class='question-box'><h3>Welcome</h3><p>The game is ready to begin.</p><button onclick='alert("Start pressed")'>Start Game</button></div>`;
+    function initUI() {
+      showMessage("Game loaded.");
+    }
+
+    window.onload = () => {
+      initUI();
     };
   </script>
 </body>
