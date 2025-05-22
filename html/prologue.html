@@ -5,16 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Bizzy Bullets - Prologue</title>
   <style>
-    /* Scoped container to prevent global CSS leaks */
     #prologue-root {
       font-family: 'Segoe UI', sans-serif;
-      background: #111;
-      color: #f0f0f0;
-      width: 100%;
-      max-width: 100%;
+      color: #222;
       text-align: center;
       padding: 0;
       margin: 0;
+      width: 100%;
     }
 
     #prologue-root h1,
@@ -24,7 +21,7 @@
     #prologue-root h5,
     #prologue-root h6,
     #prologue-root p {
-      color: #fff;
+      color: #222;
       margin: 0.5em 0;
     }
 
@@ -32,7 +29,7 @@
       opacity: 0;
       transform: translateY(-10px);
       transition: opacity 2s ease, transform 2s ease;
-      color: #ccc;
+      color: #444;
       text-align: center;
       padding-top: 1em;
     }
@@ -49,67 +46,68 @@
       padding: 1em;
     }
 
-    #prologue-root .question-box,
-    #prologue-root .question-result-box,
-    #prologue-root .combat-ui,
-    #prologue-root .reward-box,
-    #prologue-root .game-over-box {
-      background: #1e1e1e;
-      border: 2px solid #444;
+    .question-box,
+    .question-result-box,
+    .combat-ui,
+    .reward-box,
+    .game-over-box {
+      background: #f9f9f9;
+      border: 2px solid #ccc;
       border-radius: 10px;
       padding: 1.5em;
       margin: 2em auto;
       text-align: center;
-      color: #eee;
+      color: #222;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
-    #prologue-root .bar-container {
-      background: #444;
+    .bar-container {
+      background: #ddd;
       border-radius: 4px;
       height: 20px;
       margin: 0.5em 0;
       overflow: hidden;
     }
 
-    #prologue-root .bar {
+    .bar {
       height: 100%;
       transition: width 0.3s ease;
     }
 
-    #prologue-root .bar.hp { background: #e74c3c; }
-    #prologue-root .bar.energy { background: #2ecc71; }
+    .bar.hp { background: #e74c3c; }
+    .bar.energy { background: #2ecc71; }
 
-    #prologue-root button {
+    button {
       width: 100%;
       max-width: 360px;
       margin: 0.5em auto;
       padding: 0.75em 1em;
-      background: #333;
+      background: #444;
       color: #fff;
       font-size: 1em;
-      border: 1px solid #666;
+      border: none;
       border-radius: 6px;
       cursor: pointer;
       display: block;
     }
 
-    #prologue-root button:hover {
-      background: #555;
+    button:hover {
+      background: #666;
     }
 
-    #prologue-root .inventory-bar {
+    .inventory-bar {
       font-size: 0.95em;
       margin-top: 1em;
-      color: #bbb;
+      color: #555;
     }
 
-    #prologue-root a {
-      color: #4ecfff;
+    a {
+      color: #0077cc;
       text-decoration: underline;
     }
 
-    #prologue-root a:hover {
-      color: #87f5ff;
+    a:hover {
+      color: #005799;
     }
   </style>
 </head>
@@ -124,7 +122,7 @@
   </div>
 
   <script>
-    let prologueData = {
+    const prologueData = {
       npc: {
         name: "Bizzy",
         intro: "Yo, you lookin’ to level up? Take this burner – your new hustle starts now.",
