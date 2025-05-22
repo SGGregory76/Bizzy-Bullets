@@ -41,10 +41,17 @@ p, span, div {
 }
 
 /* === HUD specific === */
+#log div {
+  margin: 0.25em 0;
+}
+
 #log {
   max-height: 25vh;
   overflow-y: auto;
   flex-grow: 1;
+  background: none;
+  border: none;
+  text-align: center;
 }
 
 /* === Buttons === */
