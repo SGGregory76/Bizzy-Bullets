@@ -42,17 +42,30 @@ p, span, div {
 
 /* === HUD specific === */
 #log div {
+#log {
+  max-width: 720px;
+  margin: 2em auto;
+  padding: 1em 0;
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 0.9em;
+  text-align: center;
+}
+
+#log h4 {
+  color: #888;
+  margin-bottom: 0.5em;
+}
+
+#logContent {
+  display: inline-block;
+  text-align: left;
+}
+#logContent div {
   margin: 0.25em 0;
 }
 
-#log {
-  max-height: 25vh;
-  overflow-y: auto;
-  flex-grow: 1;
-  background: none;
-  border: none;
-  text-align: center;
-}
 
 /* === Buttons === */
 button {
