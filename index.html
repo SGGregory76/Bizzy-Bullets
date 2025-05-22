@@ -1,13 +1,121 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>Prologue - HustleTrap</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #111;
+      color: #fff;
+      font-family: sans-serif;
+    }
+    #game {
+      width: 100%;
+      max-width: 480px;
+      margin: auto;
+      padding: 1em;
+    }
+    .question-box, .combat-ui, .stash-grid, .reward-box, .stash-result-box, .combat-result-box, .question-result-box {
+      margin: 1em 0;
+      padding: 1em;
+      border: 2px solid #444;
+      border-radius: 10px;
+      background: #222;
+      text-align: center;
+    }
+    h3, h1, p {
+      text-align: center;
+      color: #fff;
+    }
+    button {
+      display: block;
+      width: 100%;
+      margin: 0.5em 0;
+      padding: 0.75em;
+      background: #444;
+      color: #fff;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #666;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5em;
+      margin-top: 1em;
+    }
+    .grid-cell {
+      font-size: 1.5em;
+      padding: 1em;
+      background: #444;
+      color: #fff;
+      border-radius: 5px;
+      border: 1px solid #666;
+      cursor: pointer;
+    }
+    .bar-container {
+      background: #555;
+      border-radius: 5px;
+      margin: 0.5em 0;
+      height: 20px;
+      overflow: hidden;
+    }
+    .bar {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+    .bar.hp { background: red; }
+    .bar.energy { background: limegreen; }
+  </style>
 </head>
 <body>
   <div id="game">Loading...</div>
-  <script src="game.js"></script>
+  <script>
+    const prologueData = {
+      npc: { name: "Blaze", intro: "Yo, you lookin’ to level up? Take this burner – your new hustle starts now.", portrait: "🧔" },
+      questions: [
+        { text: "You down to run this package?", options: [
+          { label: "No questions asked.", outcomes: { xp: 5, heat: 2, rep: 3 } },
+          { label: "What's in it?", outcomes: { rp: 2, xp: 2 } }
+        ]},
+        { text: "Where you wanna stash your cash?", options: [
+          { label: "In my sock.", outcomes: { cash: 10, heat: 1 } },
+          { label: "Bury it.", outcomes: { rp: 1, rep: 1 } }
+        ]},
+        { text: "Someone watching you?", options: [
+          { label: "Ignore it.", outcomes: { heat: 2, rep: 2 } },
+          { label: "Take the alley.", outcomes: { energy: -1, xp: 3 } }
+        ]},
+        { text: "You see a dropped bag.", options: [
+          { label: "Grab and run.", outcomes: { cash: 20, heat: 3 } },
+          { label: "Leave it.", outcomes: { rp: 1 } }
+        ]},
+        { text: "You get a weird text on the burner.", options: [
+          { label: "Reply.", outcomes: { rp: 1, xp: 1 } },
+          { label: "Ignore it.", outcomes: { rep: 1 } }
+        ]}
+      ],
+      combat: {
+        enemy: "Thug",
+        enemyStats: { hp: 10, atk: 3 },
+        playerStats: { hp: 12, atk: 4, energyCost: 1 },
+        reward: { xp: 5, rep: 2, heat: 1 },
+        failPenalty: { xp: -5, rep: -2, heat: 2 }
+      },
+      stashGame: {
+        gridSize: 3,
+        maxTries: 5,
+        reward: { cash: 50, xp: 5 }
+      }
+    };
+  </script>
 </body>
 </html>
